@@ -6,22 +6,37 @@
 </head>
 <body>
 
+<span>注册</span><hr>
 <form id="regForm">
 	角色:<input type="text" name="roleId"><br>
 	班级:<input type="text" name="classId"><br>
 	姓名:<input type="text" name="userName"><br>
 	密码:<input type="text" name="pwd"><br>
 	电话:<input type="text" name="phone"><br>
-	<input type="button" id="submitBtn" value="Submit">
+	<input type="button" id="regBtn" value="Submit">
+</form>
+<br><span>登陆</span><hr>
+<form id="loginForm">
+	姓名:<input type="text" name="userName"><br>
+	密码:<input type="text" name="pwd"><br>
+	<input type="button" id="loginBtn" value="Submit">
+</form>
+<br><span>登出</span><hr>
+<input type="button" value="登出" id="logout"><br>
+<br><span>获取课程安排</span><hr>
+<input type="button" value="获取课程安排" id="getLesson">
+<br><span>打卡</span><hr>
+<form id="tickForm">
+	课程:<input type="text" name="lessonId"><br>
+	wifi:<input type="text" name="wifi"><br>
+	<input type="button" id="tickBtn" value="Submit">
 </form>
 
 <script type="text/javascript" src="/static/jquery.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
 
-	$("#submitBtn").click(function(){
-
-
+	$("#regBtn").click(function(){
 		$.ajax({
 			type:"post",
 			async:false,
@@ -35,7 +50,73 @@ $(document).ready(function(){
 				console.log("get error -> " + data);
 			}
 		});
+	});
 
+	$("#loginBtn").click(function(){
+		$.ajax({
+			type:"post",
+			url:"/login/",
+			data:$("#loginForm").serialize(),
+			dataType:"json",
+			success:function(data){
+				console.log("get success -> " + data.success);
+			},
+			error:function(data){
+				console.log("get error -> " + data);
+			}
+		});
+	});
+
+	$("#logout").click(function(){
+		$.ajax({
+			type:"post",
+			url:"/logout/",
+			data:"",
+			dataType:"json",
+			success:function(data){
+				console.log("get success -> " + data.data);
+			},
+			error:function(data){
+				console.log("get error -> " + data);
+			}
+		});	
+	});
+
+	$("#getLesson").click(function(){
+		$.ajax({
+			type:"post",
+			url:"/lesson/",
+			data:"",
+			dataType:"json",
+			success:function(data){
+				if(data.success)
+				{
+					console.log("get success -> " + $.parseJSON(data.data));
+				}
+				else
+				{
+					console.log("get success -> " + data.data);
+				}
+			},
+			error:function(data){
+				console.log("get error -> " + data);
+			}
+		});	
+	});
+
+	$("#tickBtn").click(function(){
+		$.ajax({
+			type:"post",
+			url:"/tick/",
+			data:$("#tickForm").serialize(),
+			dataType:"json",
+			success:function(data){
+				console.log("get success -> " + data.success);
+			},
+			error:function(data){
+				console.log("get error -> " + data);
+			}
+		});
 	});
 
 });

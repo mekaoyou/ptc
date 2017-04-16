@@ -15,3 +15,9 @@ class RegForm(forms.Form):
 class LoginForm(forms.Form):
     userName = forms.CharField(max_length=16)
     pwd = forms.CharField(max_length=16)
+
+
+class RecordForm(forms.Form):
+    lessonId = forms.IntegerField()
+    wifi = forms.CharField(max_length=16)
+

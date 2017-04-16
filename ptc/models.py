@@ -14,6 +14,10 @@ class PTCClass(models.Model):
     def __unicode__(self):
         return u'%s' % self.name
 
+    # natual_key的序列化
+    def natural_key(self):
+        return u'%s' % self.name
+
     class Meta:
         verbose_name = u'班级'
         verbose_name_plural = u'班级'
@@ -25,6 +29,10 @@ class PTCClassRoom(models.Model):
     position = models.CharField(verbose_name=u'教室位置坐标', blank=True, max_length=16)
 
     def __unicode__(self):
+        return u'%s' % self.name
+
+    # natual_key的序列化
+    def natural_key(self):
         return u'%s' % self.name
 
     class Meta:
@@ -51,6 +59,10 @@ class PTCUser(models.Model):
     pwd = models.CharField(verbose_name=u'密码', max_length=16)
 
     def __unicode__(self):
+        return u'%s' % self.name
+
+    # natual_key的序列化
+    def natural_key(self):
         return u'%s' % self.name
 
     class Meta:

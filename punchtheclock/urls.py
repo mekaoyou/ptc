@@ -25,6 +25,10 @@ admin.site.site_title = u'考勤管理'
 
 urlpatterns = [
     url(r'^$', views.index),
+    url(r'^tick/', views.record),
+    url(r'^lesson/', views.getLesson),
+    url(r'^login/', views.login),
+    url(r'^logout/', views.logout),
     url(r'^reg/', views.reg),
     url(r'^roles/', views.getRoles),
     url(r'^class/', views.getClass),
