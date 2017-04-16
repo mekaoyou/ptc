@@ -25,7 +25,7 @@ SECRET_KEY = 'xmoim+i2c5d_a*qjcb2**c7ns55b8!*ay3_t)#%^n#elc(m6%k'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

@@ -24,6 +24,9 @@ admin.site.site_header = u'考勤管理'
 admin.site.site_title = u'考勤管理'
 
 urlpatterns = [
+    url(r'^$', views.index),
+    url(r'^reg/', views.reg),
+    url(r'^roles/', views.getRoles),
     url(r'^class/', views.getClass),
     url(r'^admin/', admin.site.urls),
 ]

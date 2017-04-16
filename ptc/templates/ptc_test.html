@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title>PTC Test</title>
+</head>
+<body>
+
+<form id="regForm">
+	角色:<input type="text" name="roleId"><br>
+	班级:<input type="text" name="classId"><br>
+	姓名:<input type="text" name="userName"><br>
+	密码:<input type="text" name="pwd"><br>
+	电话:<input type="text" name="phone"><br>
+	<input type="button" id="submitBtn" value="Submit">
+</form>
+
+<script type="text/javascript" src="/static/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+
+	$("#submitBtn").click(function(){
+
+
+		$.ajax({
+			type:"post",
+			async:false,
+			url: "/reg/",
+			data:$("#regForm").serialize(),
+			dataType:"json",
+			success:function(data){
+				console.log("get success -> " + data.success);
+			},
+			error:function(data){
+				console.log("get error -> " + data);
+			}
+		});
+
+	});
+
+});
+</script>
+</body>
+</html>
