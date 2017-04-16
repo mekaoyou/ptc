@@ -12,4 +12,6 @@ class RegForm(forms.Form):
     phone = forms.CharField(max_length=16, required=False)
 
 
-
+class LoginForm(forms.Form):
+    userName = forms.CharField(max_length=16)
+    pwd = forms.CharField(max_length=16)
