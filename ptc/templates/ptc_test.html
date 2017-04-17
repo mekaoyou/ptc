@@ -23,6 +23,11 @@
 </form>
 <br><span>登出</span><hr>
 <input type="button" value="登出" id="logout"><br>
+<br><span>找回密码申请</span><hr>
+<form id="resetForm">
+	姓名:<input type="text" name="userName"><br>
+	<input type="button" id="resetBtn" value="Submit">
+</form>
 <br><span>获取课程安排</span><hr>
 <input type="button" value="获取课程安排" id="getLesson">
 <br><span>打卡</span><hr>
@@ -72,6 +77,21 @@ $(document).ready(function(){
 			type:"post",
 			url:"/logout/",
 			data:"",
+			dataType:"json",
+			success:function(data){
+				console.log("get success -> " + data.data);
+			},
+			error:function(data){
+				console.log("get error -> " + data);
+			}
+		});	
+	});
+
+	$("#resetBtn").click(function(){
+		$.ajax({
+			type:"post",
+			url:"/reset/",
+			data:$("#resetForm").serialize(),
 			dataType:"json",
 			success:function(data){
 				console.log("get success -> " + data.data);

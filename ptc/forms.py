@@ -21,3 +21,14 @@ class RecordForm(forms.Form):
     lessonId = forms.IntegerField()
     wifi = forms.CharField(max_length=16)
 
+
+class ResetForm(forms.Form):
+    userName = forms.CharField(max_length=16)
+
+
+class LessonForm(forms.Form):
+    type = forms.IntegerField(max_value=1, required=False)
+
+
+class RecordsForm(forms.Form):
+    lessonId = forms.IntegerField()

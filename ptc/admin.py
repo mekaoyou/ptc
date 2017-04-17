@@ -64,7 +64,7 @@ class PTCResetPWDApplyAdmin(admin.ModelAdmin):
     list_display = ('id', 'applyUser', 'applyTime', 'resetState', )
     search_fields = ('applyUser',)
     list_display_links = ('id', 'applyUser', )
-    ordering = ('id', )
+    ordering = ('-applyTime', )
     list_per_page = 30
 
 
