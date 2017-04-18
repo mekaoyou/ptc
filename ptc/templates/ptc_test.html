@@ -6,30 +6,41 @@
 </head>
 <body>
 
+
 <span>注册</span><hr>
 <form id="regForm">
-	角色:<input type="text" name="roleId"><br>
-	班级:<input type="text" name="classId"><br>
+	角色:<select id="roleId" name="roleId"></select><br>
+	班级:<select id="classId"  name="classId"></select><br>
 	姓名:<input type="text" name="userName"><br>
 	密码:<input type="text" name="pwd"><br>
 	电话:<input type="text" name="phone"><br>
 	<input type="button" id="regBtn" value="Submit">
 </form>
+
+
 <br><span>登陆</span><hr>
 <form id="loginForm">
 	姓名:<input type="text" name="userName"><br>
 	密码:<input type="text" name="pwd"><br>
 	<input type="button" id="loginBtn" value="Submit">
 </form>
+
+
 <br><span>登出</span><hr>
 <input type="button" value="登出" id="logout"><br>
+
+
 <br><span>找回密码申请</span><hr>
 <form id="resetForm">
 	姓名:<input type="text" name="userName"><br>
 	<input type="button" id="resetBtn" value="Submit">
 </form>
+
+
 <br><span>获取课程安排</span><hr>
 <input type="button" value="获取课程安排" id="getLesson">
+
+
 <br><span>打卡</span><hr>
 <form id="tickForm">
 	课程:<input type="text" name="lessonId"><br>
@@ -37,9 +48,52 @@
 	<input type="button" id="tickBtn" value="Submit">
 </form>
 
+
+<br><span>获取打卡统计</span><hr>
+<form id="recordForm">
+	课程:<input type="text" name="lessonId"><br>
+	<input type="button" id="recordBtn" value="Submit">
+</form>
+
+
 <script type="text/javascript" src="/static/jquery.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
+
+
+	getRolesOrClass("/roles/", $("#roleId"));
+	getRolesOrClass("/class/", $("#classId"));
+
+	function getRolesOrClass(url,$select)
+	{
+
+		$.ajax({
+			type:"get",
+			async:false,
+			url: url,
+			data:"",
+			dataType:"json",
+			success:function(data){
+				if(data.success)
+				{
+					var result = $.parseJSON(data.data);
+					var htmlStr = "";
+					$.each(result, function(index, obj){
+				        htmlStr += "<option value='"+obj.pk+"'>"+obj.fields.name+"</option>"
+				    });
+				    $select.html(htmlStr);
+				}
+				else
+				{
+					console.log("get success -> " + data.success);
+				}
+			},
+			error:function(data){
+				console.log("get error -> " + data);
+			}
+		});
+	}
+
 
 	$("#regBtn").click(function(){
 		$.ajax({
@@ -139,6 +193,33 @@ $(document).ready(function(){
 		});
 	});
 
+
+	$("#recordBtn").click(function(){
+		$.ajax({
+			type:"post",
+			url:"/record/",
+			data:$("#recordForm").serialize(),
+			dataType:"json",
+			success:function(data){
+				if (data.success) 
+				{
+					var records = data.data;
+					console.log("应打卡人数 -> " + records.total);
+					console.log("实打卡人数 -> " + records.records);
+					console.log("有效打卡人数 -> " + records.valid);
+					console.log("迟到人数 -> " + records.late);
+					console.log("旷课人数 -> " + records.lost);
+				}
+				else
+				{
+					console.log("get error -> " + data.data);
+				}
+			},
+			error:function(data){
+				console.log("get error -> " + data);
+			}
+		});
+	});
 });
 </script>
 </body>
