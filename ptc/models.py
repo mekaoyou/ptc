@@ -71,10 +71,10 @@ class PTCUser(models.Model):
 
 
 class PTCLesson(models.Model):
-    name = models.CharField(verbose_name=u'课程名', max_length=16)
-    pClass = models.ForeignKey(PTCClass, verbose_name=u'班级')
+    name = models.CharField(verbose_name=u'课程名称', max_length=16)
+    pClass = models.ForeignKey(PTCClass, verbose_name=u'班级', default=1)
     teacher = models.ForeignKey(PTCUser, verbose_name=u'老师')
-    pClassRoom = models.ForeignKey(PTCClassRoom, verbose_name=u'教室')
+    pClassRoom = models.ForeignKey(PTCClassRoom, verbose_name=u'教室信息', default=1)
     startTime = models.DateTimeField(verbose_name=u'上课时间')
     endTime = models.DateTimeField(verbose_name=u'下课时间')
 

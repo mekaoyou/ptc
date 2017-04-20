@@ -4,7 +4,7 @@
 	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
     <title>PTC Test</title>
 </head>
-<body>
+<body style="text-align: center;">
 
 
 <span>注册</span><hr>
@@ -38,7 +38,7 @@
 
 
 <br><span>获取课程安排</span><hr>
-<input type="button" value="获取课程安排" id="getLesson">
+<input type="button" value="获取课程安排" id="getLesson"><br>
 
 
 <br><span>打卡</span><hr>
@@ -76,7 +76,7 @@ $(document).ready(function(){
 			success:function(data){
 				if(data.success)
 				{
-					var result = $.parseJSON(data.data);
+					var result = data.data;
 					var htmlStr = "";
 					$.each(result, function(index, obj){
 				        htmlStr += "<option value='"+obj.pk+"'>"+obj.fields.name+"</option>"

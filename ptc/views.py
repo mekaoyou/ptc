@@ -1,14 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.core import serializers
 from django.shortcuts import render
 from django.db.models.query import QuerySet
 from models import *
 from forms import *
 from django.views.decorators.csrf import csrf_exempt
-from utils import const
+from utils import const, jsonUtils
 import datetime
 
 # Create your views here.
@@ -23,13 +23,18 @@ def index(request):
 @csrf_exempt
 def getClass(request):
     classes = PTCClass.objects.all()
-    return toJSON(classes, True if len(classes) > 0 else False)
+    result = {u'data': classes, u'success': True}
+    json = jsonUtils.getJson(result)
+    return HttpResponse(json[1:-1], content_type="application/json")
+    #return toJSON(classes, True if len(classes) > 0 else False)
 
 
-@csrf_exempt
 def getRoles(request):
     roles = PTCRole.objects.all()
-    return toJSON(roles, True if len(roles) > 0 else False)
+    result = {u'data': roles, u'success': True}
+    json = jsonUtils.getJson(result)
+    return HttpResponse(json[1:-1], content_type="application/json")
+    #return toJSON(roles, True if len(roles) > 0 else False)
 
 
 @csrf_exempt
@@ -54,7 +59,7 @@ def reg(request):
             return toJSON(u'班级不存在', False)
         PTCUser.objects.get_or_create(role=roles[0], pClass=classes[0], name=regData['userName'],
                                       pwd=regData['pwd'], tel=regData['phone'])
-    elif roles[0].name is u'老师':
+    elif roles[0].name == u'老师':
         PTCUser.objects.get_or_create(role=roles[0], name=regData['userName'], pwd=regData['pwd'], tel=regData['phone'])
     else:
         return toJSON(u'注册失败', False)
@@ -111,7 +116,7 @@ def getLesson(request):
 
 
 @csrf_exempt
-def record(request):
+def tick(request):
     if request.method != 'POST':
         return toJSON(u'请求不合法', False)
     userId = request.session.get(const.FRONT_USER, None)

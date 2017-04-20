@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^$', views.index),
     url(r'^record/', views.getRecords),
     url(r'^reset/', views.resetPwd),
-    url(r'^tick/', views.record),
+    url(r'^tick/', views.tick),
     url(r'^lesson/', views.getLesson),
     url(r'^login/', views.login),
     url(r'^logout/', views.logout),

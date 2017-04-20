@@ -49,7 +49,7 @@ class PTCLessonAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "teacher":
             kwargs["queryset"] = PTCUser.objects.filter(role=PTCRole.objects.get(name=u'老师'))
-            return super(PTCLessonAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+        return super(PTCLessonAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 class PTCRecordAdmin(admin.ModelAdmin):
