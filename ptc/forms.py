@@ -10,6 +10,7 @@ class RegForm(forms.Form):
     userName = forms.CharField(max_length=16)
     pwd = forms.CharField(max_length=16)
     phone = forms.CharField(max_length=16, required=False)
+    email = forms.EmailField(max_length=50, required=False)
 
 
 class LoginForm(forms.Form):

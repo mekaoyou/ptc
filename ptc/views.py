@@ -1,15 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from django.http import JsonResponse, HttpResponse
-from django.core import serializers
-from django.shortcuts import render
-from django.db.models.query import QuerySet
-from models import *
-from forms import *
-from django.views.decorators.csrf import csrf_exempt
-from utils import const, jsonUtils
 import datetime
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
+
+from forms import *
+from models import *
+from utils import const, jsonUtils
+from django.utils.timezone import utc
 
 # Create your views here.
 const.FRONT_USER = u'front_user'
@@ -23,18 +23,12 @@ def index(request):
 @csrf_exempt
 def getClass(request):
     classes = PTCClass.objects.all()
-    result = {u'data': classes, u'success': True}
-    json = jsonUtils.getJson(result)
-    return HttpResponse(json[1:-1], content_type="application/json")
-    #return toJSON(classes, True if len(classes) > 0 else False)
+    return toJSON(classes, True if len(classes) > 0 else False)
 
 
 def getRoles(request):
     roles = PTCRole.objects.all()
-    result = {u'data': roles, u'success': True}
-    json = jsonUtils.getJson(result)
-    return HttpResponse(json[1:-1], content_type="application/json")
-    #return toJSON(roles, True if len(roles) > 0 else False)
+    return toJSON(roles, True if len(roles) > 0 else False)
 
 
 @csrf_exempt
@@ -58,9 +52,10 @@ def reg(request):
         if len(classes) <= 0:
             return toJSON(u'班级不存在', False)
         PTCUser.objects.get_or_create(role=roles[0], pClass=classes[0], name=regData['userName'],
-                                      pwd=regData['pwd'], tel=regData['phone'])
+                                      pwd=regData['pwd'], tel=regData['phone'], email=regData['email'])
     elif roles[0].name == u'老师':
-        PTCUser.objects.get_or_create(role=roles[0], name=regData['userName'], pwd=regData['pwd'], tel=regData['phone'])
+        PTCUser.objects.get_or_create(role=roles[0], name=regData['userName'], pwd=regData['pwd'], tel=regData['phone'],
+                                      email=regData['email'])
     else:
         return toJSON(u'注册失败', False)
     return toJSON(u'注册成功', True)
@@ -78,7 +73,7 @@ def login(request):
     if len(users) <= 0:
         return toJSON(u'用户名密码错误', False)
     request.session[const.FRONT_USER] = users[0].id
-    return toJSON(u'登陆成功', True)
+    return toJSON(users[0].role.id, True)
 
 
 @csrf_exempt
@@ -102,16 +97,16 @@ def getLesson(request):
         return toJSON(u'参数校验失败', False)
     loginUser = PTCUser.objects.get(id=userId)
     if loginUser.role.name == u'学生':
-        lessons = PTCLesson.objects.filter(pClass=loginUser.pClass, endTime__gt=datetime.datetime.now()).order_by(
-            "endTime")
+        lessons = PTCLesson.objects.filter(pClass=loginUser.pClass,
+                                            endTime__gt=datetime.datetime.utcnow().replace(tzinfo=utc)).order_by("endTime")
     else:
         type = int(form.cleaned_data['type'] if form.cleaned_data['type'] is not None else 0)
         if type == 0:
-            lessons = PTCLesson.objects.filter(teacher=loginUser, endTime__gt=datetime.datetime.now()).order_by(
-                "endTime")
+            lessons = PTCLesson.objects.filter(teacher=loginUser,
+                                               endTime__gt=datetime.datetime.utcnow().replace(tzinfo=utc)).order_by("endTime")
         elif type == 1:
-            lessons = PTCLesson.objects.filter(teacher=loginUser, endTime__lt=datetime.datetime.now()).order_by(
-                "endTime")
+            lessons = PTCLesson.objects.filter(teacher=loginUser,
+                                               endTime__lt=datetime.datetime.utcnow().replace(tzinfo=utc)).order_by("endTime")
     return toJSON(lessons, True)
 
 
@@ -126,12 +121,13 @@ def tick(request):
     if not form.is_valid():
         return toJSON(u'参数校验失败', False)
     recData = form.cleaned_data
-    lessons = PTCLesson.objects.filter(id=recData['lessonId'], endTime__gt=datetime.datetime.now())
+    lessons = PTCLesson.objects.filter(id=recData['lessonId'],
+                                       endTime__gt=datetime.datetime.utcnow().replace(tzinfo=utc))
     if len(lessons) <= 0:
         return toJSON(u'无效打卡，课程不存在或已结束', False)
     loginUser = PTCUser.objects.get(id=userId)
     if loginUser.role.name == u'学生':
-        if lessons[0].pClass != loginUser.PClass:
+        if lessons[0].pClass != loginUser.pClass:
             return toJSON(u'无权打卡', False)
     else:
         if lessons[0].teacher != loginUser:
@@ -139,7 +135,8 @@ def tick(request):
     records = PTCRecord.objects.filter(recordLesson=lessons[0], recordUser=loginUser)
     if len(records) > 0:
         return toJSON(u'已打卡', False)
-    PTCRecord.objects.create(recordLesson=lessons[0], recordUser=loginUser, recordTime=datetime.datetime.now(),
+    PTCRecord.objects.create(recordLesson=lessons[0], recordUser=loginUser,
+                             recordTime=datetime.datetime.utcnow().replace(tzinfo=utc),
                              recordWifi=recData['wifi'])
     return toJSON(u'打卡成功', True)
 
@@ -203,12 +200,15 @@ def getRecords(request):
 
 
 def toJSON(arr, success):
-    if isinstance(arr, QuerySet):
-        data = serializers.serialize("json", arr, use_natural_foreign_keys=True)
-    else:
-        data = arr
-    result = {r'success': success, r'data': data}
-    return JsonResponse(result, safe=False)
+    # if isinstance(arr, QuerySet):
+    #     data = serializers.serialize("json", arr, use_natural_foreign_keys=True)
+    # else:
+    #     data = arr
+    # result = {r'success': success, r'data': data}
+    # return JsonResponse(result, safe=False)
+    result = {u'data': arr, u'success': success}
+    json = jsonUtils.getJson(result)
+    return HttpResponse(json, content_type="application/json")
 
 
 def getValidTime(startTime):

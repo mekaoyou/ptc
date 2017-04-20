@@ -14,6 +14,7 @@
 	姓名:<input type="text" name="userName"><br>
 	密码:<input type="text" name="pwd"><br>
 	电话:<input type="text" name="phone"><br>
+	邮箱:<input type="text" name="email"><br>
 	<input type="button" id="regBtn" value="Submit">
 </form>
 
@@ -185,7 +186,14 @@ $(document).ready(function(){
 			data:$("#tickForm").serialize(),
 			dataType:"json",
 			success:function(data){
-				console.log("get success -> " + data.success);
+				if(data.success)
+				{
+					console.log("get success -> " + data.success);
+				}
+				else
+				{
+					alert(data.data)
+				}
 			},
 			error:function(data){
 				console.log("get error -> " + data);

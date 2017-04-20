@@ -21,7 +21,7 @@ class JsonEncoder(simplejson.JSONEncoder):
                 然后再用simplejson反序列化一次
                 得到一个标准的字典（dict）对象
                 """
-                return simplejson.loads(serialize('json', obj))
+                return simplejson.loads(serialize('json', obj, use_natural_foreign_keys=True))
             if isinstance(obj, models.Model):
                 """
                 如果传入的是单个对象，区别于QuerySet的就是
@@ -65,9 +65,8 @@ def jsonBack(json):
         return deserialize('json', '[' + json +']')
 
 
-def getJson(*args):
+def getJson(args):
     """    使用JsonEncoder这个自定义的规则类来序列化对象
     """
-    #result = dict(args)
     return simplejson.dumps(args, cls=JsonEncoder)
 
