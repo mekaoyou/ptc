@@ -176,18 +176,25 @@ def getRecords(request):
         return toJSON(u'课程不存在', False)
     if lessons[0].teacher != loginUser:
         return toJSON(u'无权查看考勤记录', False)
-    studens = PTCUser.objects.filter(pClass=lessons[0].pClass)
-    recordsTotal = PTCRecord.objects.filter(recordLesson=lessons[0],
-                                            recordTime__lt=lessons[0].endTime,
-                                            recordTime__gt=getValidTime(lessons[0].startTime)).exclude(recordUser=loginUser)
-    validRecords = PTCRecord.objects.filter(recordLesson=lessons[0],
-                                             recordWifi=lessons[0].pClassRoom.wifi,
-                                            recordTime__lt=lessons[0].endTime,
-                                            recordTime__gt=getValidTime(lessons[0].startTime)).exclude(recordUser=loginUser)
-    lateRecords = PTCRecord.objects.filter(recordLesson=lessons[0],
-                                             recordWifi=lessons[0].pClassRoom.wifi,
-                                            recordTime__lt=lessons[0].endTime,
-                                           recordTime__gt=lessons[0].startTime).exclude(recordUser=loginUser)
+    result = getRecordsData(lessons[0], loginUser)
+    return toJSON(result, True)
+
+
+def getRecordsData(lesson):
+    studens = PTCUser.objects.filter(pClass=lesson.pClass)
+    recordsTotal = PTCRecord.objects.filter(recordLesson=lesson,
+                                            recordTime__lt=lesson.endTime,
+                                            recordTime__gt=getValidTime(lesson.startTime)).exclude(
+        recordUser=lesson.teacher)
+    validRecords = PTCRecord.objects.filter(recordLesson=lesson,
+                                            recordWifi=lesson.pClassRoom.wifi,
+                                            recordTime__lt=lesson.endTime,
+                                            recordTime__gt=getValidTime(lesson.startTime)).exclude(
+        recordUser=lesson.teacher)
+    lateRecords = PTCRecord.objects.filter(recordLesson=lesson,
+                                           recordWifi=lesson.pClassRoom.wifi,
+                                           recordTime__lt=lesson.endTime,
+                                           recordTime__gt=lesson.startTime).exclude(recordUser=teacher)
     loseRecords = len(studens) - len(validRecords)
     result = {
         u'total': len(studens),
@@ -196,7 +203,7 @@ def getRecords(request):
         u'late': len(lateRecords),
         u'lost': loseRecords,
     }
-    return toJSON(result, True)
+    return result
 
 
 def toJSON(arr, success):

@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import djcelery
 
+djcelery.setup_loader()
+BROKER_URL = 'django://'
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -38,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ptc',
+    'djcelery',
+    'kombu.transport.django',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +76,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'punchtheclock.wsgi.application'
 
 
+CELERY_ALWAYS_EAGER = True
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
@@ -131,3 +138,5 @@ EMAIL_HOST_USER = 'qqnumber@qq.com'
 EMAIL_HOST_PASSWORD = 'xxx'
 DEFAULT_FROM_EMAIL = 'sys<qqnumber@qq.com>'
 
+JPUSH_APP_KEY = '408396ecb33fcafb394ad9a4'
+JPUSH_MASTER_SECRET = '88e08c38e5ec381004326b4d'

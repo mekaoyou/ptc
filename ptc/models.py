@@ -69,8 +69,9 @@ class PTCUser(models.Model):
         return u'%s' % self.name
 
     def save(self,  *args, **kwargs):
+        isupdate = self.id is not None
         super(PTCUser, self).save(*args, **kwargs)
-        if self.email is not None:
+        if isupdate and self.email is not None:
             print "++++++++++++ send email +++++++++", self.email
             send_mail(u'考勤系统密码已重置', u'新密码:%s' % self.pwd, settings.DEFAULT_FROM_EMAIL,
                       [self.email], fail_silently=False)
@@ -82,11 +83,12 @@ class PTCUser(models.Model):
 
 class PTCLesson(models.Model):
     name = models.CharField(verbose_name=u'课程名称', max_length=16, unique=True)
-    pClass = models.ForeignKey(PTCClass, verbose_name=u'班级', default=1)
+    pClass = models.ForeignKey(PTCClass, verbose_name=u'班级')
     teacher = models.ForeignKey(PTCUser, verbose_name=u'老师')
-    pClassRoom = models.ForeignKey(PTCClassRoom, verbose_name=u'教室信息', default=1)
+    pClassRoom = models.ForeignKey(PTCClassRoom, verbose_name=u'教室信息')
     startTime = models.DateTimeField(verbose_name=u'上课时间')
     endTime = models.DateTimeField(verbose_name=u'下课时间')
+    pushed = models.BooleanField(verbose_name=u'打卡统计已推送', default=False)
 
     def __unicode__(self):
         return u'%s' % self.name
