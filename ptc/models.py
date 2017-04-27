@@ -57,7 +57,7 @@ class PTCUser(models.Model):
     role = models.ForeignKey(PTCRole, verbose_name=u'角色')
     pClass = models.ForeignKey(PTCClass, verbose_name=u'班级', blank=True, null=True)
     name = models.CharField(verbose_name=u'姓名', max_length=16, unique=True)
-    pwd = models.CharField(verbose_name=u'密码', max_length=16)
+    pwd = models.CharField(verbose_name=u'密码', max_length=16,)
     tel = models.CharField(verbose_name=u'电话', max_length=11, blank=True, )
     email = models.EmailField(verbose_name=u'邮箱', max_length=50, blank=True, null=True)
 

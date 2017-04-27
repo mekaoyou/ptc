@@ -15,3 +15,4 @@ pip install django-celery
 python manage.py runserver 192.168.*.*:8000
 #run celery
 python manage.py celery beat
+

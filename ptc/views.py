@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from forms import *
 from models import *
-from utils import const, jsonUtils
+from utils import const, jsonUtils, jpushUtils, dateUtils
 from django.utils.timezone import utc
 
 # Create your views here.
@@ -73,7 +73,8 @@ def login(request):
     if len(users) <= 0:
         return toJSON(u'用户名密码错误', False)
     request.session[const.FRONT_USER] = users[0].id
-    return toJSON(users[0].role.id, True)
+    data = {u'roleId': users[0].role.id, u'userId': users[0].id}
+    return toJSON(data, True)
 
 
 @csrf_exempt
@@ -98,16 +99,16 @@ def getLesson(request):
     loginUser = PTCUser.objects.get(id=userId)
     if loginUser.role.name == u'学生':
         lessons = PTCLesson.objects.filter(pClass=loginUser.pClass,
-                                            endTime__gt=datetime.datetime.utcnow().replace(tzinfo=utc)).order_by("endTime")
+                                            endTime__gt=datetime.datetime.utcnow().replace(tzinfo=utc)).order_by("-endTime")
     else:
         type = int(form.cleaned_data['type'] if form.cleaned_data['type'] is not None else 0)
         if type == 0:
             lessons = PTCLesson.objects.filter(teacher=loginUser,
-                                               endTime__gt=datetime.datetime.utcnow().replace(tzinfo=utc)).order_by("endTime")
+                                               endTime__gt=datetime.datetime.utcnow().replace(tzinfo=utc)).order_by("-endTime")
         elif type == 1:
             lessons = PTCLesson.objects.filter(teacher=loginUser,
-                                               endTime__lt=datetime.datetime.utcnow().replace(tzinfo=utc)).order_by("endTime")
-    return toJSON(lessons, True)
+                                               endTime__lt=datetime.datetime.utcnow().replace(tzinfo=utc)).order_by("-endTime")
+    return toJSON(transeLesson(lessons), True)
 
 
 @csrf_exempt
@@ -180,7 +181,7 @@ def getRecords(request):
     return toJSON(result, True)
 
 
-def getRecordsData(lesson):
+def getRecordsData(lesson, teacher):
     studens = PTCUser.objects.filter(pClass=lesson.pClass)
     recordsTotal = PTCRecord.objects.filter(recordLesson=lesson,
                                             recordTime__lt=lesson.endTime,
@@ -222,3 +223,9 @@ def getValidTime(startTime):
     tenMinAgo = datetime.timedelta(minutes=10)
     return startTime - tenMinAgo
 
+
+def transeLesson(lessons):
+    for lesson in lessons:
+        lesson.startTime = dateUtils.utc_to_local(lesson.startTime)
+        lesson.endTime = dateUtils.utc_to_local(lesson.endTime)
+    return lessons

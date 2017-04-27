@@ -43,7 +43,7 @@ class PTCLessonAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'pClass', 'teacher', 'pClassRoom', 'startTime', 'endTime',)
     search_fields = ('name',)
     list_display_links = ('id', 'name', )
-    ordering = ('id', )
+    ordering = ('-startTime', )
     list_per_page = 30
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -56,7 +56,7 @@ class PTCRecordAdmin(admin.ModelAdmin):
     list_display = ('id', 'recordTime', 'recordUser', 'recordLesson', 'recordWifi', )
     search_fields = ('recordUser',)
     list_display_links = ('id', 'recordUser', )
-    ordering = ('id', )
+    ordering = ('-recordTime', )
     list_per_page = 30
 
 
